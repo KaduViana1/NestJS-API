@@ -29,7 +29,9 @@ export class AuthService {
     }
   }
 
-  async signIn(username: string, password: string): Promise<User> {
+  async signIn(dto): Promise<User> {
+    const { username, password } = dto;
+
     const user = await this.prisma.user.findUnique({ where: { username } });
 
     if (!user) throw new ForbiddenException('User not found');
