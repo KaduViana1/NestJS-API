@@ -1,20 +1,26 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from '../dtos/user.dto';
 import { User } from '@prisma/client';
 import { UserService } from './user.service';
+
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(JwtGuard)
   @Get()
-  async getAllUsers(): Promise<User[]> {
-    return this.userService.getAllUsers();
-  }
-
-  @Get(':id')
-  async getOneUser(@Param() userId: { id: string }) {
-    return this.userService.getOneUser(userId);
+  async getUser() {
+    return 'String';
   }
 
   @Post()
