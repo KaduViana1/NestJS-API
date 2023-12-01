@@ -3,10 +3,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JwtService,
+  ) {}
 
   async signUp(createUserDto): Promise<User> {
     const { name, username, email } = createUserDto;
@@ -42,5 +46,14 @@ export class AuthService {
 
     delete user.password;
     return user;
+  }
+
+  async signToken(userId: string, email: string): Promise<any> {
+    const data = {
+      sub: userID,
+      email,
+    };
+
+    return this.jwt.signAsync();
   }
 }
