@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @IsNotEmpty({ message: 'Nome de usúario não pode estar vazio' })
@@ -18,12 +19,4 @@ export class CreateUserDto {
   readonly name: string;
 }
 
-export class SignInDto {
-  @IsNotEmpty({ message: 'Nome de usúario não pode estar vazio' })
-  @IsString()
-  readonly username: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly password: string;
-}
+export class SignInAndUpdateDto extends PartialType(CreateUserDto) {}

@@ -3,33 +3,35 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  Post,
+  Patch,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from '../dtos/user.dto';
 import { User } from '@prisma/client';
 import { UserService } from './user.service';
-
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
+import { GetUser } from 'src/auth/decorator/get-user.decorator';
+import { SignInAndUpdateDto } from 'src/dtos/auth.dto';
 
+@UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(JwtGuard)
-  @Get()
-  async getUser() {
-    return 'String';
+  @Get('me')
+  async getMe(@GetUser() user: User) {
+    return user;
   }
 
-  @Post()
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.userService.createUser(createUserDto);
+  @Patch('me')
+  async updateUser(
+    @GetUser('id') userId: string,
+    @Body() dto: SignInAndUpdateDto,
+  ) {
+    return this.userService.updateUser(userId, dto);
   }
 
-  @Delete(':id')
-  async deleteUser(@Param() param: { id: string }): Promise<any> {
-    return this.userService.deleteUser(param);
+  @Delete('me')
+  async deleteUser(@GetUser('id') userId: string) {
+    return this.userService.deleteUser(userId);
   }
 }
