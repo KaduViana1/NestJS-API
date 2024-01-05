@@ -12,7 +12,7 @@ export class PrismaService
   }
 
   constructor(config: ConfigService) {
-    super({ datasources: { db: { url: config.get('SQLITE') } } });
+    super({ datasources: { db: { url: config.get('DATABASE_URL') } } });
   }
 
   async onModuleDestroy() {

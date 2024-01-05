@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:nest.db"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -18,4 +18,34 @@ model User {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  games     Game[]
+  reviews   Review[]
+  role      Role     @default(BASIC)
+}
+
+model Game {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  publisher   String
+  developer   String
+  releaseDate DateTime @db.Date()
+  users       User[]
+  reviews     Review[]
+}
+
+model Review {
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  Game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId    String
+  review    String
+  createdAt DateTime @default(now())
+
+  @@id([userId, gameId])
+  @@unique([userId, gameId])
+}
+
+enum Role {
+  BASIC
+  ADMIN
 }
