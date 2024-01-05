@@ -13,16 +13,21 @@ import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { SignInAndUpdateDto } from 'src/dtos/auth.dto';
 
 @UseGuards(JwtGuard)
-@Controller('user')
+@Controller('user/me')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('me')
+  @Get()
   async getMe(@GetUser() user: User) {
     return user;
   }
 
-  @Patch('me')
+  @Get('reviews')
+  async getReviews(@GetUser('id') userId: string) {
+    return this.userService.getReviews(userId);
+  }
+
+  @Patch()
   async updateUser(
     @GetUser('id') userId: string,
     @Body() dto: SignInAndUpdateDto,
@@ -30,7 +35,7 @@ export class UserController {
     return this.userService.updateUser(userId, dto);
   }
 
-  @Delete('me')
+  @Delete()
   async deleteUser(@GetUser('id') userId: string) {
     return this.userService.deleteUser(userId);
   }

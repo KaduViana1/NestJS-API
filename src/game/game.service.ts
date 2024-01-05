@@ -1,6 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
-// import { UpdateGameDto } from './dto/update-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Game } from '@prisma/client';
 
@@ -9,11 +13,9 @@ export class GameService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createGameDto: CreateGameDto): Promise<Game> {
-    const { name, publisher, developer } = createGameDto;
-    const releaseDate = new Date(createGameDto.releaseDate).toISOString();
     try {
       const newGame = await this.prisma.game.create({
-        data: { name, publisher, developer, releaseDate },
+        data: { ...createGameDto },
       });
 
       return newGame;
@@ -33,16 +35,25 @@ export class GameService {
         where: {
           id,
         },
+        include: { reviews: true },
       });
+      if (!game) throw new NotFoundException('Jogo não encontrado');
       return game;
     } catch (error) {
-      throw new ForbiddenException('Jogo não encontrado');
+      throw new ForbiddenException(error);
     }
   }
 
-  // update(id: number, updateGameDto: UpdateGameDto) {
-  //   return `This action updates a #${id} game`;
-  // }
+  async update(id: string, updateGameDto: UpdateGameDto) {
+    const game = await this.prisma.game.update({
+      where: { id },
+      data: {
+        ...updateGameDto,
+      },
+    });
+
+    return game;
+  }
 
   async remove(id: string) {
     try {

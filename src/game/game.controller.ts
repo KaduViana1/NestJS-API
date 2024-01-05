@@ -3,18 +3,17 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  Patch,
   Param,
   Delete,
   UseGuards,
 } from '@nestjs/common';
 import { GameService } from './game.service';
 import { CreateGameDto } from './dto/create-game.dto';
-// import { UpdateGameDto } from './dto/update-game.dto';
+import { UpdateGameDto } from './dto/update-game.dto';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
-import { GetUser } from 'src/auth/decorator/get-user.decorator';
-import { User } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guard/role.guard';
+import { TransformDatePipe } from './pipes/release-date-transform.pipe';
 
 @Controller('games')
 export class GameController {
@@ -22,7 +21,7 @@ export class GameController {
 
   @UseGuards(JwtGuard, RolesGuard)
   @Post('/create')
-  create(@Body() createGameDto: CreateGameDto) {
+  create(@Body(TransformDatePipe) createGameDto: CreateGameDto) {
     return this.gameService.create(createGameDto);
   }
 
@@ -36,11 +35,16 @@ export class GameController {
     return this.gameService.findOne(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-  //   return this.gameService.update(+id, updateGameDto);
-  // }
+  @UseGuards(JwtGuard, RolesGuard)
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body(TransformDatePipe) updateGameDto: UpdateGameDto,
+  ) {
+    return this.gameService.update(id, updateGameDto);
+  }
 
+  @UseGuards(JwtGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.gameService.remove(id);

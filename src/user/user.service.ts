@@ -1,9 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async getReviews(userId: string) {
+    try {
+      const reviews = await this.prisma.review.findMany({ where: { userId } });
+
+      if (!reviews)
+        throw new NotFoundException('Você ainda não fez nenhum review');
+      return reviews;
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
+  }
 
   async updateUser(userId, dto) {
     const user = await this.prisma.user.update({

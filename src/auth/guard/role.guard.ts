@@ -17,7 +17,9 @@ export class RolesGuard extends AuthGuard('role') implements CanActivate {
     const { user } = context.switchToHttp().getRequest();
 
     if (user.role !== 'ADMIN')
-      throw new ForbiddenException('Você não tem permissão para fazer isso');
+      throw new ForbiddenException(
+        'Esta ação é permitida apenas para administradores',
+      );
     return true;
   }
 }
