@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { JwtGuard } from 'src/auth/guard/jwt.guard';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 
@@ -33,13 +32,19 @@ export class ReviewController {
     return this.reviewService.findByGameName(game);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(id, updateReviewDto);
+  @UseGuards(JwtGuard)
+  @Patch(':gameId')
+  update(
+    @Param('gameId') gameId: string,
+    @GetUser('id') userId: string,
+    @Body() updateReviewDto: CreateReviewDto,
+  ) {
+    return this.reviewService.update(userId, gameId, updateReviewDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewService.remove(id);
+  @UseGuards(JwtGuard)
+  @Delete(':gameId')
+  remove(@Param('gameId') gameId: string, @GetUser('id') userId: string) {
+    return this.reviewService.remove(userId, gameId);
   }
 }

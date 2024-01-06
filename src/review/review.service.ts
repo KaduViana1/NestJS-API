@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -47,11 +46,35 @@ export class ReviewService {
     }
   }
 
-  update(id: string, updateReviewDto: UpdateReviewDto) {
-    return `This action updates a #${id} review`;
+  async update(
+    userId: string,
+    gameId: string,
+    createReviewDto: CreateReviewDto,
+  ) {
+    try {
+      const review = await this.prisma.review.update({
+        data: { review: createReviewDto.review },
+        where: { userId_gameId: { userId, gameId } },
+      });
+      return review;
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} review`;
+  async remove(userId: string, gameId: string) {
+    try {
+      await this.prisma.review.delete({
+        where: {
+          userId_gameId: {
+            userId,
+            gameId,
+          },
+        },
+      });
+      return `Review Deleted`;
+    } catch (error) {
+      throw new ForbiddenException(error);
+    }
   }
 }
