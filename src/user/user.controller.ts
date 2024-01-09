@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -25,6 +26,14 @@ export class UserController {
   @Get('reviews')
   async getReviews(@GetUser('id') userId: string) {
     return this.userService.getReviews(userId);
+  }
+
+  @Patch('add-game/:gameId')
+  async addGame(
+    @GetUser('id') userId: string,
+    @Param('gameId') gameId: string,
+  ) {
+    return this.userService.addGame(userId, gameId);
   }
 
   @Patch()

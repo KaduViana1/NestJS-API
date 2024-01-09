@@ -21,6 +21,16 @@ export class UserService {
     }
   }
 
+  async addGame(userId, gameId) {
+    return await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        games: { connect: { id: gameId } },
+      },
+      include: { games: true },
+    });
+  }
+
   async updateUser(userId, dto) {
     const user = await this.prisma.user.update({
       where: { id: userId },

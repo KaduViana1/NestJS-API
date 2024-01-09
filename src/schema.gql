@@ -1,0 +1,72 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  username: String!
+  email: String!
+  name: String!
+  role: String!
+  games: [Game!]!
+}
+
+type Game {
+  id: ID!
+  name: String!
+  publisher: String!
+  developer: String!
+  releaseDate: DateTime!
+  users: [User!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  allGames: [Game!]!
+  game(id: String!): Game!
+  users: [User!]!
+  user(id: String!): User!
+}
+
+type Mutation {
+  createGamesGraph(createGamesGraphInput: CreateGamesGraphInput!): Game!
+  updateGamesGraph(updateGamesGraphInput: UpdateGamesGraphInput!): Game!
+  removeGamesGraph(id: String!): Game!
+  createUserGraph(createUserGraphInput: CreateUserGraphInput!): User!
+  updateUserGraph(updateUserGraphInput: UpdateUserGraphInput!): User!
+  removeUserGraph(id: String!): User!
+}
+
+input CreateGamesGraphInput {
+  name: String!
+  publisher: String!
+  developer: String!
+  releaseDate: DateTime!
+}
+
+input UpdateGamesGraphInput {
+  name: String
+  publisher: String
+  developer: String
+  releaseDate: DateTime
+  id: String!
+}
+
+input CreateUserGraphInput {
+  username: String!
+  email: String!
+  password: String!
+  name: String!
+}
+
+input UpdateUserGraphInput {
+  username: String
+  email: String
+  password: String
+  name: String
+  id: String!
+}
